@@ -11,32 +11,27 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
         with:
-          node-version: '20'
+          distribution: 'zulu'
+          java-version: '17'
 
-      - name: Install Capacitor
+      - name: Install dependencies
         run: |
-          npm install -g @capacitor/cli
-          npm install @capacitor/core @capacitor/android
-
-      - name: Create full Capacitor project
-        run: |
-          mkdir -p capacitor-app
-          cd capacitor-app
-          echo '{"name": "quran-app", "version": "1.0.0", "private": true}' > package.json
-          npx cap init QuranApp com.quran.app
-          npx cap add android
-          # نسخ الملفات إلى المسار الصحيح
-          mkdir -p android/app/src/main/assets/public
-          cp ../app/src/main/assets/index.html android/app/src/main/assets/public/
-          cp ../app/src/main/assets/splash.png android/app/src/main/assets/public/
+          sudo apt update
+          sudo apt install -y gradle
 
       - name: Build APK
         run: |
-          cd capacitor-app/android
-          ./gradlew assembleRelease
+          mkdir -p capacitor-app/android/app/src/main/assets/public
+          cp app/src/main/assets/index.html capacitor-app/android/app/src/main/assets/public/
+          cp app/src/main/assets/splash.png capacitor-app/android/app/src/main/assets/public/
+          cp ic_launcher.png capacitor-app/android/app/src/main/res/drawable/
+          cd capacitor-app
+          gradle init --type java-application --dsl groovy --test-framework junit-jupiter --project-name QuranApp
+          cd android
+          gradle assembleRelease
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
