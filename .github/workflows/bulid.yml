@@ -27,12 +27,11 @@ jobs:
           cd capacitor-app
           npx cap init QuranApp com.quran.app
           npx cap add android
-
-      - name: Copy HTML files to assets
-        run: |
-          cp index.html capacitor-app/android/app/src/main/assets/public/
-          cp splash.png capacitor-app/android/app/src/main/assets/public/
-          cp ic_launcher.png capacitor-app/android/app/src/main/res/drawable/
+          cd ..
+          # نسخ ملفات التطبيق إلى مجلد assets الصحيح
+          mkdir -p capacitor-app/android/app/src/main/assets/public
+          cp app/src/main/assets/index.html capacitor-app/android/app/src/main/assets/public/
+          cp app/src/main/assets/splash.png capacitor-app/android/app/src/main/assets/public/
 
       - name: Build APK
         run: |
