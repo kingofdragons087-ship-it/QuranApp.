@@ -17,12 +17,11 @@ jobs:
           node-version: '20'
 
       - name: Install PWABuilder
-        run: npm install -g @pwabuilder/cli
+        run: |
+          npm install -g @pwabuilder/pwabuilder
 
       - name: Build APK
         run: |
-          # نفترض أن ملفك المسمى index.html موجود في الجذر
-          # نقوم بتشغيل أداة البناء مباشرة على الملف
           pwabuilder package index.html --platforms android --output ./output
 
       - name: Upload APK
