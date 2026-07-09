@@ -1,4 +1,4 @@
-name: Build Android APK
+name: Build APK from Single HTML
 
 on:
   push:
@@ -11,30 +11,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Java
-        uses: actions/setup-java@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          distribution: 'zulu'
-          java-version: '17'
+          node-version: '20'
 
-      - name: Install dependencies
-        run: |
-          sudo apt update
-          sudo apt install -y gradle
+      - name: Install PWABuilder
+        run: npm install -g @pwabuilder/cli
 
       - name: Build APK
         run: |
-          mkdir -p capacitor-app/android/app/src/main/assets/public
-          cp app/src/main/assets/index.html capacitor-app/android/app/src/main/assets/public/
-          cp app/src/main/assets/splash.png capacitor-app/android/app/src/main/assets/public/
-          cp ic_launcher.png capacitor-app/android/app/src/main/res/drawable/
-          cd capacitor-app
-          gradle init --type java-application --dsl groovy --test-framework junit-jupiter --project-name QuranApp
-          cd android
-          gradle assembleRelease
+          # نفترض أن ملفك المسمى index.html موجود في الجذر
+          # نقوم بتشغيل أداة البناء مباشرة على الملف
+          pwabuilder package index.html --platforms android --output ./output
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: QuranApp-APK
-          path: capacitor-app/android/app/build/outputs/apk/release/app-release-unsigned.apk
+          path: output/android/app-release.apk
