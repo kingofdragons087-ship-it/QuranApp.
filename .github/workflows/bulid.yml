@@ -9,12 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Install Capacitor
         run: |
@@ -23,21 +23,24 @@ jobs:
 
       - name: Create Capacitor project
         run: |
+          mkdir -p capacitor-app
+          cd capacitor-app
           npx cap init QuranApp com.quran.app
           npx cap add android
 
       - name: Copy HTML files to assets
         run: |
-          mkdir -p android/app/src/main/assets/public
-          cp index.html splash.png android/app/src/main/assets/public/
+          cp index.html capacitor-app/android/app/src/main/assets/public/
+          cp splash.png capacitor-app/android/app/src/main/assets/public/
+          cp ic_launcher.png capacitor-app/android/app/src/main/res/drawable/
 
       - name: Build APK
         run: |
-          cd android
+          cd capacitor-app/android
           ./gradlew assembleRelease
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: QuranApp-APK
-          path: android/app/build/outputs/apk/release/app-release-unsigned.apk
+          path: capacitor-app/android/app/build/outputs/apk/release/app-release-unsigned.apk
