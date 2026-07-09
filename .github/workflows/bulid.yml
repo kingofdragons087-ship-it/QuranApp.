@@ -1,0 +1,43 @@
+name: Build Android APK
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install Capacitor
+        run: |
+          npm install -g @capacitor/cli
+          npm install @capacitor/core @capacitor/android
+
+      - name: Create Capacitor project
+        run: |
+          npx cap init QuranApp com.quran.app
+          npx cap add android
+
+      - name: Copy HTML files to assets
+        run: |
+          mkdir -p android/app/src/main/assets/public
+          cp index.html splash.png android/app/src/main/assets/public/
+
+      - name: Build APK
+        run: |
+          cd android
+          ./gradlew assembleRelease
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: QuranApp-APK
+          path: android/app/build/outputs/apk/release/app-release-unsigned.apk
