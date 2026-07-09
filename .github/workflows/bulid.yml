@@ -23,18 +23,12 @@ jobs:
 
       - name: Create full Capacitor project
         run: |
-          # إنشاء المجلد والانتقال إليه
           mkdir -p capacitor-app
           cd capacitor-app
-          
-          # إنشاء ملف package.json في المجلد الجديد
           echo '{"name": "quran-app", "version": "1.0.0", "private": true}' > package.json
-          
-          # تشغيل Capacitor في نفس المجلد
           npx cap init QuranApp com.quran.app
           npx cap add android
-          
-          # نسخ ملفات التطبيق
+          # نسخ الملفات إلى المسار الصحيح
           mkdir -p android/app/src/main/assets/public
           cp ../app/src/main/assets/index.html android/app/src/main/assets/public/
           cp ../app/src/main/assets/splash.png android/app/src/main/assets/public/
